@@ -1,9 +1,4 @@
 const { fetchTopics } = require("../models/topics.models");
-const endpointsInfo = require("../endpoints.json");
-
-function getAPI(req, res, next) {
-  return res.status(200).send({ endpoints: endpointsInfo });
-}
 
 function getTopics(req, res, next) {
   return fetchTopics()
@@ -15,4 +10,4 @@ function getTopics(req, res, next) {
     });
 }
 
-module.exports = { getAPI, getTopics };
+module.exports = { getTopics };
