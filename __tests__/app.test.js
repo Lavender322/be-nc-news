@@ -42,7 +42,7 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("GET 200: Responds with an article by its id", () => {
+  test("GET 200: Responds with a single article by its id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
