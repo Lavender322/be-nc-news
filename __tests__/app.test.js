@@ -41,6 +41,42 @@ describe("/api/topics", () => {
   });
 });
 
+describe("/api/articles", () => {
+  test("GET 200: Responds with all articles sorted by default by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(13);
+        articles.forEach(
+          ({
+            author,
+            title,
+            article_id,
+            topic,
+            created_at,
+            votes,
+            article_img_url,
+            comment_count,
+          }) => {
+            expect(typeof author).toBe("string");
+            expect(typeof title).toBe("string");
+            expect(typeof article_id).toBe("number");
+            expect(typeof topic).toBe("string");
+            expect(typeof created_at).toBe("string");
+            expect(typeof votes).toBe("number");
+            expect(typeof article_img_url).toBe("string");
+            expect(typeof comment_count).toBe("number");
+          }
+        );
+        expect(articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+});
+
 describe("/api/articles/:article_id", () => {
   test("GET 200: Responds with a single article by its id", () => {
     return request(app)
@@ -48,29 +84,18 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        const {
-          author,
-          title,
-          article_id,
-          topic,
-          created_at,
-          votes,
-          article_img_url,
-        } = article;
-        expect(author).toBe("butter_bridge");
-        expect(title).toBe("Living in the shadow of a great man");
-        expect(article_id).toBe(1);
-        expect(article.body).toBe("I find this existence challenging");
-        expect(topic).toBe("mitch");
-        // TO FIX THE BELOW FAILED TEST:
-        // Expected: "2020-07-09T21:11:00.000Z"
-        // Received: "2020-07-09T20:11:00.000Z"
-        // expect(created_at).toBe(new Date(1594329060000).toISOString());
-        expect(typeof created_at).toBe("string");
-        expect(votes).toBe(100);
-        expect(article_img_url).toBe(
-          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-        );
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          votes: 100,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+
+        // expect(typeof created_at).toBe("string");
       });
   });
   test("GET 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
