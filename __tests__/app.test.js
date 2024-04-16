@@ -42,34 +42,25 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-  test("GET 200: Responds with all articles sorted by default by date in descending order", () => {
+  test("GET 200: Responds with all articles sorted by default by date in descending order, where there should not be a body property present on any of the article objects", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(13);
-        articles.forEach(
-          ({
-            author,
-            title,
-            article_id,
-            topic,
-            created_at,
-            votes,
-            article_img_url,
-            comment_count,
-          }) => {
-            expect(typeof author).toBe("string");
-            expect(typeof title).toBe("string");
-            expect(typeof article_id).toBe("number");
-            expect(typeof topic).toBe("string");
-            expect(typeof created_at).toBe("string");
-            expect(typeof votes).toBe("number");
-            expect(typeof article_img_url).toBe("string");
-            expect(typeof comment_count).toBe("number");
-          }
-        );
+        expect(articles);
+        articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+          expect(article).not.toHaveProperty("body");
+        });
         expect(articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -94,8 +85,6 @@ describe("/api/articles/:article_id", () => {
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
-
-        // expect(typeof created_at).toBe("string");
       });
   });
   test("GET 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
@@ -110,6 +99,57 @@ describe("/api/articles/:article_id", () => {
   test("GET 400: Responds with an appropriate status and error message when given an invalid article id", () => {
     return request(app)
       .get("/api/articles/not-an-article")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  test("GET 200: Responds with all comments for an article retrieved by default with the most recent comments first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        comments.forEach(
+          ({ comment_id, votes, created_at, author, body, article_id }) => {
+            expect(article_id).toBe(1);
+            expect(typeof comment_id).toBe("number");
+            expect(typeof votes).toBe("number");
+            expect(typeof created_at).toBe("string");
+            expect(typeof author).toBe("string");
+            expect(typeof body).toBe("string");
+          }
+        );
+        expect(comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("GET 200: Responds with an empty array when article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toHaveLength(0);
+      });
+  });
+  test("GET 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
+    return request(app)
+      .get("/api/articles/14/comments")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("article does not exist");
+      });
+  });
+  test("GET 400: Responds with an appropriate status and error message when given an invalid article id", () => {
+    return request(app)
+      .get("/api/articles/not-an-article/comments")
       .expect(400)
       .then(({ body }) => {
         const { msg } = body;
