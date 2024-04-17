@@ -128,6 +128,17 @@ describe("/api/articles/:article_id", () => {
         expect(typeof article.created_at).toBe("string");
       });
   });
+  test("GET 200: Responds together with the total count of all the comments associated with this article", () => {
+    return request(app)
+      .get("/api/articles/9")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          comment_count: 2,
+        });
+      });
+  });
   test("GET 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
     return request(app)
       .get("/api/articles/999")
@@ -146,6 +157,7 @@ describe("/api/articles/:article_id", () => {
         expect(msg).toBe("bad request");
       });
   });
+
   test("PATCH 200: Responds with an updated article by its id", () => {
     const newVote = -100;
     return request(app)
@@ -241,6 +253,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(msg).toBe("bad request");
       });
   });
+
   test("POST 201: Responds with the posted comment for an article", () => {
     const newComment = {
       username: "butter_bridge",
