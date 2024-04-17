@@ -21,6 +21,7 @@ function checkArticleExists(articleId) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
     });
 }
+
 function insertCommentByArticleId(articleId, username, body) {
   return db
     .query(
