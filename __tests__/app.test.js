@@ -107,7 +107,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
   test("PATCH 200: Responds with an updated article by its id", () => {
-    const newVote = 1;
+    const newVote = -100;
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: newVote })
@@ -120,7 +120,7 @@ describe("/api/articles/:article_id", () => {
           topic: "mitch",
           author: "butter_bridge",
           body: "I find this existence challenging",
-          votes: 101,
+          votes: 0,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
