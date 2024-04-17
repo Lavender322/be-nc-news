@@ -106,6 +106,49 @@ describe("/api/articles/:article_id", () => {
         expect(msg).toBe("bad request");
       });
   });
+  test("PATCH 200: Responds with an updated article by its id", () => {
+    const newVote = 1;
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: newVote })
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          votes: 101,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+        expect(typeof article.created_at).toBe("string");
+      });
+  });
+  test("PATCH 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
+    const newVote = 1;
+    return request(app)
+      .patch("/api/articles/999")
+      .send({ inc_votes: newVote })
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("article does not exist");
+      });
+  });
+  test("PATCH 400: Responds with an appropriate status and error message when provided with a bad newVotes", () => {
+    const newVote = "not-a-number";
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: newVote })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
@@ -115,6 +158,7 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
+        expect(comments).toHaveLength(11);
         comments.forEach(
           ({ comment_id, votes, created_at, author, body, article_id }) => {
             expect(article_id).toBe(1);

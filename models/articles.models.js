@@ -27,4 +27,17 @@ function fetchArticles() {
     });
 }
 
-module.exports = { fetchArticles, fetchArticleById };
+function updateArticleById(articleId, incVotes) {
+  return db
+    .query(
+      `UPDATE articles SET votes=$1+votes WHERE article_id=$2 RETURNING *`,
+      [incVotes, articleId]
+    )
+    .then(({ rows }) => {
+      if (!rows.length)
+        return Promise.reject({ status: 404, msg: "article does not exist" });
+      return rows[0];
+    });
+}
+
+module.exports = { fetchArticles, fetchArticleById, updateArticleById };
