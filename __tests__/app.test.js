@@ -49,7 +49,6 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(13);
-        expect(articles);
         articles.forEach((article) => {
           expect(typeof article.author).toBe("string");
           expect(typeof article.title).toBe("string");
@@ -64,6 +63,47 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("created_at", {
           descending: true,
         });
+      });
+  });
+  test("GET 200: Responds with all articles filtered by the topic value specified in the query", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+          expect(article).not.toHaveProperty("body");
+        });
+        expect(articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("GET 200: Responds with an empty array when topic has no articles associated with", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(0);
+      });
+  });
+  test("GET 404: Responds with an appropriate status and error message for a topic that is not found in the database", () => {
+    return request(app)
+      .get("/api/articles?topic=rabbits")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("topic does not exist");
       });
   });
 });
