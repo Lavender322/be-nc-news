@@ -32,8 +32,19 @@ function insertCommentByArticleId(articleId, username, body) {
     });
 }
 
+function removeCommentById(commentId) {
+  return db
+    .query(`DELETE FROM comments WHERE comment_id=$1 RETURNING *`, [commentId])
+    .then(({ rows }) => {
+      if (!rows.length)
+        return Promise.reject({ status: 404, msg: "comment does not exist" });
+      return rows[0];
+    });
+}
+
 module.exports = {
   fetchCommentsByArticleId,
   checkArticleExists,
   insertCommentByArticleId,
+  removeCommentById,
 };

@@ -251,6 +251,30 @@ describe("/api/articles/:article_id/comments", () => {
   });
 });
 
+describe("/api/comments/:comment_id", () => {
+  test("DELETE 204: Deletes the specified comment and sends no body back", () => {
+    return request(app).delete("/api/comments/3").expect(204);
+  });
+  test("DELETE 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
+    return request(app)
+      .delete("/api/comments/19")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("comment does not exist");
+      });
+  });
+  test("DELETE 400: Responds with an appropriate status and error message when given an invalid article id", () => {
+    return request(app)
+      .delete("/api/comments/not-a-comment")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+});
+
 describe("NOT EXISTED", () => {
   test("GET 404: Responds with an appropriate status and error message when given a non-existing endpoint", () => {
     return request(app)
