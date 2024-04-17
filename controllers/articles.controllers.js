@@ -37,4 +37,8 @@ function patchArticleById(req, res, next) {
     });
 }
 
-module.exports = { getArticles, getArticleById, patchArticleById };
+module.exports = {
+  getArticles,
+  getArticleById,
+  patchArticleById,
+};

@@ -94,5 +94,9 @@
         "created_at": "2024-04-17T09:32:31.953Z"
       }
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment by its id",
+    "queries": []
   }
 }
