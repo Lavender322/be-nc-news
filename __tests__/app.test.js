@@ -88,7 +88,7 @@ describe("/api/articles", () => {
         });
       });
   });
-  test("GET 200: Responds with an empty array when topic has no articles", () => {
+  test("GET 200: Responds with an empty array when topic has no articles associated with", () => {
     return request(app)
       .get("/api/articles?topic=paper")
       .expect(200)
@@ -97,7 +97,6 @@ describe("/api/articles", () => {
         expect(articles).toHaveLength(0);
       });
   });
-
   test("GET 404: Responds with an appropriate status and error message for a topic that is not found in the database", () => {
     return request(app)
       .get("/api/articles?topic=rabbits")
