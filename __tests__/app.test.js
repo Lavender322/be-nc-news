@@ -275,8 +275,25 @@ describe("/api/comments/:comment_id", () => {
   });
 });
 
+describe("/api/users", () => {
+  test("GET 200: Responds with all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toHaveLength(4);
+        users.forEach(({ username, name, avatar_url }) => {
+          expect(typeof username).toBe("string");
+          expect(typeof name).toBe("string");
+          expect(typeof avatar_url).toBe("string");
+        });
+      });
+  });
+});
+
 describe("NOT EXISTED", () => {
-  test("GET 404: Responds with an appropriate status and error message when given a non-existing endpoint", () => {
+  test("GET 404: Responds with an appropriate status and error message when given a non-existent endpoint", () => {
     return request(app)
       .get("/api/not-a-path")
       .expect(404)
