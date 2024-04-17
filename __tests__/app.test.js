@@ -276,7 +276,7 @@ describe("/api/comments/:comment_id", () => {
 });
 
 describe("/api/users", () => {
-  test("GET 200: Responds with all users", () => {
+  test("GET 200: Responds with all users with their respective usernames, names and avatar urls", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
