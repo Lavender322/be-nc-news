@@ -41,5 +41,39 @@
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all comments by article_id",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 5,
+          "body": "I hate streaming noses",
+          "article_id": 1,
+          "author": "icellusedkars",
+          "votes": 0,
+          "created_at": "2020-11-03T21:00:00.000Z"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a new comment by article_id",
+    "queries": [],
+    "exampleRequestBody": {
+      "username": "icellusedkars",
+      "body": "This is eloquently crafted."
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 19,
+        "body": "This is eloquently crafted.",
+        "article_id": 1,
+        "author": "butter_bridge",
+        "votes": 0,
+        "created_at": "2024-04-17T09:32:31.953Z"
+      }
+    }
   }
 }

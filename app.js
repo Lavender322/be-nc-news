@@ -1,7 +1,11 @@
 const express = require("express");
 const app = express();
 const { getTopics } = require("./controllers/topics.controllers");
-const endpointsInfo = require("./endpoints.json");
+const {
+  getCommentsByArticleId,
+  postCommentByArticleId,
+} = require("./controllers/comments.controllers");
+const endpoints = require("./endpoints.json");
 const {
   getArticles,
   getArticleById,
@@ -10,7 +14,7 @@ const {
 app.use(express.json());
 
 app.get("/api", (req, res, next) => {
-  return res.status(200).send({ endpoints: endpointsInfo });
+  return res.status(200).send({ endpoints });
 });
 
 app.get("/api/topics", getTopics);
@@ -19,6 +23,10 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "path not found" });
 });
@@ -26,8 +34,13 @@ app.all("*", (req, res) => {
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
-  } else if (err.code === "22P02") {
+  } else if (err.code === "22P02" || err.code === "23502") {
     res.status(400).send({ msg: "bad request" });
+  } else if (
+    err.code === "23503" &&
+    err.constraint === "comments_article_id_fkey"
+  ) {
+    res.status(404).send({ msg: "article does not exist" });
   }
 });
 
