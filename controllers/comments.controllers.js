@@ -21,7 +21,7 @@ function getCommentsByArticleId(req, res, next) {
 function postCommentByArticleId(req, res, next) {
   const { article_id } = req.params;
   const { username, body } = req.body;
-  insertCommentByArticleId(article_id, username, body)
+  return insertCommentByArticleId(article_id, username, body)
     .then((comment) => {
       res.status(201).send({ comment });
     })
