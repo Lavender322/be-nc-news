@@ -12,6 +12,7 @@ const {
   getArticleById,
   patchArticleById,
 } = require("./controllers/articles.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 
 app.use(express.json());
 
@@ -32,6 +33,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
+
+app.get("/api/users", getUsers);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "path not found" });
