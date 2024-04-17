@@ -21,5 +21,19 @@ function checkArticleExists(articleId) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
     });
 }
+function insertCommentByArticleId(articleId, username, body) {
+  return db
+    .query(
+      `INSERT INTO comments (body, article_id, author, votes, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [body, articleId, username, 0, new Date()]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+}
 
-module.exports = { fetchCommentsByArticleId, checkArticleExists };
+module.exports = {
+  fetchCommentsByArticleId,
+  checkArticleExists,
+  insertCommentByArticleId,
+};

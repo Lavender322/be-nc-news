@@ -57,5 +57,23 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a new comment by article_id",
+    "queries": [],
+    "exampleRequestBody": {
+      "username": "icellusedkars",
+      "body": "This is eloquently crafted."
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 19,
+        "body": "This is eloquently crafted.",
+        "article_id": 1,
+        "author": "butter_bridge",
+        "votes": 0,
+        "created_at": "2024-04-17T09:32:31.953Z"
+      }
+    }
   }
 }

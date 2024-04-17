@@ -85,6 +85,7 @@ describe("/api/articles/:article_id", () => {
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
+        expect(typeof article.created_at).toBe("string");
       });
   });
   test("GET 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
@@ -150,6 +151,54 @@ describe("/api/articles/:article_id/comments", () => {
   test("GET 400: Responds with an appropriate status and error message when given an invalid article id", () => {
     return request(app)
       .get("/api/articles/not-an-article/comments")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("POST 201: Responds with the posted comment for an article", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is eloquently crafted.",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: 19,
+          body: "This is eloquently crafted.",
+          article_id: 1,
+          author: "butter_bridge",
+          votes: 0,
+        });
+        expect(typeof comment.created_at).toBe("string");
+      });
+  });
+  test("POST 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is eloquently crafted.",
+    };
+    return request(app)
+      .post("/api/articles/14/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("article does not exist");
+      });
+  });
+  test("POST 400: Responds with an appropriate status and error message when provided with a bad body (no body)", () => {
+    const newComment = {
+      username: "butter_bridge",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
       .expect(400)
       .then(({ body }) => {
         const { msg } = body;
