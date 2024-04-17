@@ -255,7 +255,7 @@ describe("/api/comments/:comment_id", () => {
   test("DELETE 204: Deletes the specified comment and sends no body back", () => {
     return request(app).delete("/api/comments/3").expect(204);
   });
-  test("DELETE 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
+  test("DELETE 404: Responds with an appropriate status and error message when given a non-existent comment id", () => {
     return request(app)
       .delete("/api/comments/19")
       .expect(404)
@@ -264,7 +264,7 @@ describe("/api/comments/:comment_id", () => {
         expect(msg).toBe("comment does not exist");
       });
   });
-  test("DELETE 400: Responds with an appropriate status and error message when given an invalid article id", () => {
+  test("DELETE 400: Responds with an appropriate status and error message when given an invalid comment id", () => {
     return request(app)
       .delete("/api/comments/not-a-comment")
       .expect(400)
