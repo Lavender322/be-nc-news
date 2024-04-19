@@ -37,8 +37,8 @@
   },
   "jest": {
     "setupFilesAfterEnv": [
-      "jest-sorted",
-      "./testSetup.js"
+      "jest-extended/all",
+      "jest-sorted"
     ]
   }
 }
