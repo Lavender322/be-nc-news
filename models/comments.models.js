@@ -25,8 +25,8 @@ function checkArticleExists(articleId) {
 function insertCommentByArticleId(articleId, username, body) {
   return db
     .query(
-      `INSERT INTO comments (body, article_id, author, votes, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [body, articleId, username, 0, new Date()]
+      `INSERT INTO comments (body, article_id, author) VALUES ($1, $2, $3) RETURNING *`,
+      [body, articleId, username]
     )
     .then(({ rows }) => {
       return rows[0];

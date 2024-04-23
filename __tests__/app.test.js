@@ -94,7 +94,7 @@ describe("/api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        expect(articles).toHaveLength(0);
+        expect(articles).toEqual([]);
       });
   });
   test("GET 404: Responds with an appropriate status and error message for a topic that is not found in the database", () => {
@@ -232,7 +232,7 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        expect(comments).toHaveLength(0);
+        expect(comments).toEqual([]);
       });
   });
   test("GET 404: Responds with an appropriate status and error message when given a non-existent article id", () => {
@@ -253,7 +253,6 @@ describe("/api/articles/:article_id/comments", () => {
         expect(msg).toBe("bad request");
       });
   });
-
   test("POST 201: Responds with the posted comment for an article", () => {
     const newComment = {
       username: "butter_bridge",
@@ -289,10 +288,35 @@ describe("/api/articles/:article_id/comments", () => {
         expect(msg).toBe("article does not exist");
       });
   });
+  test("POST 400: Responds with an appropriate status and error message when given an invalid article id", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is eloquently crafted.",
+    };
+    return request(app)
+      .post("/api/articles/not-an-article/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
   test("POST 400: Responds with an appropriate status and error message when provided with a bad body (no body)", () => {
     const newComment = {
       username: "butter_bridge",
     };
+    return request(app)
+      .post("/api/articles/not-an-article/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("POST 400: Responds with an appropriate status and error message when provided with no comment at all", () => {
+    const newComment = {};
     return request(app)
       .post("/api/articles/1/comments")
       .send(newComment)
@@ -300,6 +324,20 @@ describe("/api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe("bad request");
+      });
+  });
+  test("POST 404: Responds with an appropriate status and error message when provided with a username that doesn't exist in the database", () => {
+    const newComment = {
+      username: "lavender322",
+      body: "This is eloquently crafted.",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("username does not exist");
       });
   });
 });

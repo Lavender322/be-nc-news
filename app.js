@@ -50,6 +50,11 @@ app.use((err, req, res, next) => {
     err.constraint === "comments_article_id_fkey"
   ) {
     res.status(404).send({ msg: "article does not exist" });
+  } else if (
+    err.code === "23503" &&
+    err.constraint === "comments_author_fkey"
+  ) {
+    res.status(404).send({ msg: "username does not exist" });
   }
 });
 
