@@ -17,8 +17,9 @@ function checkArticleExists(articleId) {
   return db
     .query(`SELECT * FROM articles WHERE article_id=$1`, [articleId])
     .then(({ rows }) => {
-      if (!rows.length)
+      if (!rows.length) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
+      }
     });
 }
 
@@ -37,8 +38,9 @@ function removeCommentById(commentId) {
   return db
     .query(`DELETE FROM comments WHERE comment_id=$1 RETURNING *`, [commentId])
     .then(({ rows }) => {
-      if (!rows.length)
+      if (!rows.length) {
         return Promise.reject({ status: 404, msg: "comment does not exist" });
+      }
       return rows[0];
     });
 }
