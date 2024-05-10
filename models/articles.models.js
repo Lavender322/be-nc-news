@@ -19,7 +19,9 @@ function fetchArticleById(article_id) {
     });
 }
 
-function fetchArticles(topic) {
+function fetchArticles(topic, sort_by = "created_at", order = "desc") {
+  const validSortByList = ["created_at", "comment_count", "votes"];
+  const validOrderList = ["asc", "desc"];
   const queryVals = [];
 
   let sqlQueryString = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(*)::INT AS comment_count
@@ -33,7 +35,14 @@ function fetchArticles(topic) {
   }
 
   sqlQueryString += `GROUP BY articles.article_id
-                     ORDER BY articles.created_at DESC`;
+                     ORDER BY ${sort_by} ${order};`;
+
+  if (!validSortByList.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "invalid query value" });
+  }
+  if (!validOrderList.includes(order)) {
+    return Promise.reject({ status: 400, msg: "invalid query value" });
+  }
 
   return db.query(sqlQueryString, queryVals).then(({ rows }) => {
     return rows;

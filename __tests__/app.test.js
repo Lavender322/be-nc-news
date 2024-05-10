@@ -106,6 +106,7 @@ describe("/api/articles", () => {
         expect(msg).toBe("topic does not exist");
       });
   });
+  // TODO: sortBy, order queries
 });
 
 describe("/api/articles/:article_id", () => {
